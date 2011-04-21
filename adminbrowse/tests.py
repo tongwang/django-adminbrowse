@@ -413,11 +413,10 @@ class TestAutoBrowseModelAdmin(TestCase):
                 css = {'all': ['test.css']}
 
         self.model_admin = BookAdmin(Book, test_site)
-        self.media_url = settings.ADMINBROWSE_MEDIA_URL
 
     def test_has_css_media(self):
         css_media = self.model_admin.media['css']._css['all']
-        self.assertTrue(self.media_url + 'css/adminbrowse.css' in css_media)
+        self.assertTrue(i for i in css_media if 'css/adminbrowse.css' in i)
 
     def test_does_not_clobber_existing_media(self):
         css_media = self.model_admin.media['css']._css['all']

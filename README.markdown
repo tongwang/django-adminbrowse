@@ -32,10 +32,6 @@ Then, add 'adminbrowse' to your `INSTALLED_APPS`:
         'adminbrowse',
     )
 
-Finally, copy the media files to the location from which your static files
-are served, and set `ADMINBROWSE_MEDIA_URL` to the corresponding location.
-Keep reading for details.
-
 After installing adminbrowse, you may wish to ensure that everything's in
 working order:
 
@@ -54,11 +50,6 @@ To enable the most basic functionality, just inherit from
 
     class MyModelAdmin(AutoBrowseModelAdmin):
         ...
-
-Make sure you have made adminbrowse media available at the URL specified by
-the `ADMINBROWSE_MEDIA_URL` setting. For example, if you copied the 
-adminbrowse media to **`<MEDIA_ROOT>/adminbrowse`**, set `ADMINBROWSE_MEDIA_URL`
-to **`<MEDIA_URL>/adminbrowse/`**.
 
 ### How it works
 Django allows one to use callable objects in the `list_display` attribute of
@@ -104,9 +95,9 @@ media, you'll want to place the following `Media` definition in your `ModelAdmin
 classes:
 
     class Media:
-        css = {'all': (ADMINBROWSE_MEDIA_URL + 'css/adminbrowse.css',)}
+        css = {'all': (STATIC_URL + 'adminbrowse/css/adminbrowse.css',)}
 
-...where `ADMINBROWSE_MEDIA_URL` is the value from `settings.py`.
+...where `STATIC_URL` is the value from `settings.py` as used by [staticfiles](http://docs.djangoproject.com/en/dev/howto/static-files/).
 
 ### Rendering templates
 Use `help(adminbrowse.template_column)` for now.
