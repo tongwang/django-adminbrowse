@@ -36,6 +36,9 @@ class ChangeLink(ChangeListTemplateColumn, ChangeListModelFieldColumn):
     If an instance's foreign key field is empty, the column will display the
     value of `default`, which defaults to the empty string.
 
+    If the `text` param is provided it may either be a static text value or
+    a callable which will be called with each field value
+
     Include the `adminbrowse` CSS file in the ModelAdmin's `Media` definition
     to apply default styles to the link.
 
@@ -46,23 +49,31 @@ class ChangeLink(ChangeListTemplateColumn, ChangeListModelFieldColumn):
     template_name = "adminbrowse/link_to_change.html"
 
     def __init__(self, model, name, short_description=None, default="",
-                 template_name=None, extra_context=None):
+                 template_name=None, extra_context=None, text=None):
         ChangeListTemplateColumn.__init__(self, short_description,
                                           template_name or self.template_name,
                                           extra_context, name)
         ChangeListModelFieldColumn.__init__(self, model, name,
                                             short_description, default)
+        self.text = text
         self.to_model = self.field.rel.to
         self.to_opts = self.to_model._meta
         self.to_field = self.field.rel.field_name
 
     def get_context(self, obj):
         value  = getattr(obj, self.field_name)
+
         if value is not None:
             url = self.get_change_url(obj, value)
             title = self.get_title(obj, value)
         else:
             url = title = None
+
+        if callable(self.text):
+            value = self.text(value)
+        elif self.text:
+            value = self.text
+
         context = {'column': self, 'object': obj, 'value': value, 'url': url,
                    'title': title}
         context.update(self.extra_context)
@@ -123,7 +134,7 @@ class ChangeListLink(ChangeListTemplateColumn, ChangeListModelFieldColumn):
     Changelist column that adds a link to a changelist view containing only
     the related objects in the specified many-to-many or one-to-many field.
 
-    The `text` argument sets the link text. If `text` is a callabe, it will
+    The `text` argument sets the link text. If `text` is a callable, it will
     be called with the (unevaluated) `QuerySet` for the related objects. If
     `text` is False in a boolean context ("", 0, etc.), the value of `default`
     will be rendered instead of the link. The default `text` returns the
