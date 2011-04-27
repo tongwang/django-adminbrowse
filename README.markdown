@@ -135,6 +135,20 @@ Using it like so:
 ...will still provide a clickable link to the filtered changelist without
 performing the query.
 
+If you need to display per-record information and can retrieve the information
+you need using [Django's aggregate operators](http://docs.djangoproject.com/en/1.3/topics/db/aggregation/#generating-aggregates-for-each-item-in-a-queryset)
+the `text` argument will also accept a callable which receives each record and
+the queryset of the related object, allowing you to do something like the
+following to collect all of the counts using a single query:
+
+    class AuthorAdmin(AutoBrowseModelAdmin):
+        list_display = ('title', link_to_changelist(Author, "books", text=lambda obj, value: obj.book_count))
+        search_fields = ('title', )
+
+        def queryset(self, *args, **kwargs):
+            return Author.objects.all().annotate(book_count=Count("books__author"))
+
+
 [INSTALL]: http://github.com/exogen/django-adminbrowse/blob/master/INSTALL
 [www]: http://brianbeck.com/
 
