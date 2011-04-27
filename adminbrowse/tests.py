@@ -151,7 +151,7 @@ class TestOneToManyChangeListLink(TestCase):
 
     def test_callable_text_gets_called_with_value(self):
         link = link_to_changelist(Person, 'bibliography',
-                                  text=lambda x: "List books (%s)" % len(x))
+                                  text=lambda obj, x: "List books (%s)" % len(x))
         url = "/foo/admin/bar/adminbrowse/book/?author__pid__exact=3"
         title = "List books with this author"
         self.assertEqual(link(self.people[2]).strip(),

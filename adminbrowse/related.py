@@ -135,11 +135,11 @@ class ChangeListLink(ChangeListTemplateColumn, ChangeListModelFieldColumn):
     the related objects in the specified many-to-many or one-to-many field.
 
     The `text` argument sets the link text. If `text` is a callable, it will
-    be called with the (unevaluated) `QuerySet` for the related objects. If
-    `text` is False in a boolean context ("", 0, etc.), the value of `default`
-    will be rendered instead of the link. The default `text` returns the
-    number of items in the `QuerySet`, so no link will be displayed if there
-    are no related objects.
+    be called with the parent object and the unevaluated `QuerySet` for the
+    related objects. If `text` is False in a boolean context ("", 0, etc.), the
+    value of `default` will be rendered instead of the link. The default `text`
+    returns the number of items in the `QuerySet`, so no link will be displayed
+    if there are no related objects.
 
     Include the `adminbrowse` CSS file in the ModelAdmin's `Media` definition
     to apply default styles to the link.
@@ -150,8 +150,9 @@ class ChangeListLink(ChangeListTemplateColumn, ChangeListModelFieldColumn):
     """
     template_name = "adminbrowse/link_to_changelist.html"
 
-    def __init__(self, model, name, short_description=None, text=len,
-                 default="", template_name=None, extra_context=None):
+    def __init__(self, model, name, short_description=None,
+                 text=lambda i, j: len(j), default="", template_name=None,
+                 extra_context=None):
         ChangeListTemplateColumn.__init__(self, short_description,
                                           template_name or self.template_name,
                                           extra_context)
@@ -176,7 +177,7 @@ class ChangeListLink(ChangeListTemplateColumn, ChangeListModelFieldColumn):
         value  = getattr(obj, self.field_name).all()
         text = self.text
         if callable(text):
-            text = text(value)
+            text = text(obj, value)
         if text:
             url = self.get_changelist_url(obj, value)
             title = self.get_title(obj, value)
