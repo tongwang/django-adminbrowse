@@ -70,7 +70,7 @@ class ChangeLink(ChangeListTemplateColumn, ChangeListModelFieldColumn):
             url = title = None
 
         if callable(self.text):
-            value = self.text(value)
+            value = self.text(obj, value)
         elif self.text:
             value = self.text
 
