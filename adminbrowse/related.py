@@ -135,10 +135,10 @@ class ChangeListLink(ChangeListTemplateColumn, ChangeListModelFieldColumn):
     the related objects in the specified many-to-many or one-to-many field.
 
     The `text` argument sets the link text. If `text` is a callable, it will
-    be called with the (unevaluated) `QuerySet` for the related objects. If
-    `text` is False in a boolean context ("", 0, etc.), the value of `default`
-    will be rendered instead of the link. The default `text` returns the
-    number of items in the `QuerySet`, so no link will be displayed if there
+    be called with the parent object and unevaluated `QuerySet` for the related
+    objects. If `text` is False in a boolean context ("", 0, etc.), the value of
+    `default` will be rendered instead of the link. The default `text` returns
+    the number of items in the `QuerySet`, so no link will be displayed if there
     are no related objects.
 
     Include the `adminbrowse` CSS file in the ModelAdmin's `Media` definition
@@ -176,7 +176,7 @@ class ChangeListLink(ChangeListTemplateColumn, ChangeListModelFieldColumn):
         value  = getattr(obj, self.field_name).all()
         text = self.text
         if callable(text):
-            text = text(value)
+            text = text(obj, value)
         if text:
             url = self.get_changelist_url(obj, value)
             title = self.get_title(obj, value)
