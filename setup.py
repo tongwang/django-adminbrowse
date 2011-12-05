@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
     name = "django-adminbrowse",
-    version = "0.1.2",
+    version = "0.1.2.post721971c",
     packages = ['adminbrowse'],
     include_package_data = True,
     author = "Brian Beck",
