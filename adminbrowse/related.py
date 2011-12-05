@@ -152,12 +152,13 @@ class ChangeListLink(ChangeListTemplateColumn, ChangeListModelFieldColumn):
 
     def __init__(self, model, name, short_description=None,
                  text=lambda i, j: len(j), default="", template_name=None,
-                 extra_context=None):
+                 extra_context=None, admin_order_field=None):
         ChangeListTemplateColumn.__init__(self, short_description,
                                           template_name or self.template_name,
                                           extra_context)
         ChangeListModelFieldColumn.__init__(self, model, name,
-                                            short_description, default)
+                                            short_description, default,
+                                            admin_order_field=admin_order_field)
         if self.direct:
             self.to_model = self.field.related.parent_model
             self.to_opts = self.to_model._meta
@@ -183,9 +184,11 @@ class ChangeListLink(ChangeListTemplateColumn, ChangeListModelFieldColumn):
             title = self.get_title(obj, value)
         else:
             url = title = None
+
         context = {'column': self, 'object': obj, 'value': value,
                    'text': text, 'url': url, 'title': title}
         context.update(self.extra_context)
+
         return context
 
     def get_changelist_url(self, obj, value):

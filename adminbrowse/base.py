@@ -60,8 +60,11 @@ class ChangeListTemplateColumn(ChangeListColumn):
         return context
 
 class ChangeListModelFieldColumn(ChangeListColumn):
-    def __init__(self, model, name, short_description=None, default=""):
-        ChangeListColumn.__init__(self, short_description, None)
+    def __init__(self, model, name, short_description=None, default="",
+                 admin_order_field=None):
+
+        ChangeListColumn.__init__(self, short_description,
+                                  admin_order_field=admin_order_field)
         self.field_name = name
         try:
             field, model_, self.direct, self.m2m = \
