@@ -14,21 +14,27 @@ class AutoBrowseModelAdmin(ModelAdmin):
     - Linking to the URL for `URLField` fields.
 
     This will also include the adminbrowse media definition.
-    
+
     """
     def __init__(self, model, admin_site):
         super(AutoBrowseModelAdmin, self).__init__(model, admin_site)
-        for i, name in enumerate(self.list_display):
-            if isinstance(name, basestring):
-                try:
-                    field, model_, direct, m2m = \
-                        self.opts.get_field_by_name(name)
-                except FieldDoesNotExist:
-                    pass
-                else:
-                    column = self._get_changelist_column(field)
-                    if column is not None:
-                        self.list_display[i] = column
+
+        self.list_display = tuple(self._process_list_display_entry(i) for i in self.list_display)
+
+    def _process_list_display_entry(self, entry):
+            if not isinstance(entry, basestring):
+                return entry  # Do nothing
+
+            try:
+                field, model_, direct, m2m = self.opts.get_field_by_name(entry)
+            except FieldDoesNotExist:
+                return entry
+
+            column = self._get_changelist_column(field)
+            if column is not None:
+                return column
+            else:
+                return entry
 
     def _get_changelist_column(self, field):
         if isinstance(field, ForeignKey):
@@ -37,6 +43,5 @@ class AutoBrowseModelAdmin(ModelAdmin):
             return link_to_url(self.model, field.name)
 
     class Media:
-        css = {'all': (settings.ADMINBROWSE_MEDIA_URL +
-                       'css/adminbrowse.css',)}
+        css = {'all': ("%s/css/adminbrowse.css" % settings.STATIC_URL)}
 
