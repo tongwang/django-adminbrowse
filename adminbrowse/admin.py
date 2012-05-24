@@ -43,5 +43,5 @@ class AutoBrowseModelAdmin(ModelAdmin):
             return link_to_url(self.model, field.name)
 
     class Media:
-        css = {'all': ("%s/css/adminbrowse.css" % settings.STATIC_URL)}
+        css = {'all': ("css/adminbrowse.css", )}
 
