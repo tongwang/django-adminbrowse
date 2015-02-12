@@ -24,8 +24,8 @@ def admin_view_name(model_or_instance, short_name, site=admin.site):
 
     """
     opts = model_or_instance._meta
-    app_label, module_name = opts.app_label, opts.module_name
-    return '%s:%s_%s_%s' % (site.name, app_label, module_name, short_name)
+    app_label, model_name = opts.app_label, opts.model_name
+    return '%s:%s_%s_%s' % (site.name, app_label, model_name, short_name)
 
 
 class ChangeLink(ChangeListTemplateColumn, ChangeListModelFieldColumn):
