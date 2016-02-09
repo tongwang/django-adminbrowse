@@ -67,8 +67,9 @@ class ChangeListModelFieldColumn(ChangeListColumn):
                                   admin_order_field=admin_order_field)
         self.field_name = name
         try:
-            field, model_, self.direct, self.m2m = \
-                model._meta.get_field_by_name(name)
+            field = model._meta.get_field(name)
+            self.direct = not field.auto_created or field.concrete
+            self.m2m = field.many_to_many
         except FieldDoesNotExist:
             descriptor = getattr(model, name)
             field = descriptor.related
