@@ -82,8 +82,11 @@ class ChangeListModelFieldColumn(ChangeListColumn):
                 self.admin_order_field = name
         else:
             self.field = field.field
-            self.model = field.parent_model
-            self.opts = field.parent_model._meta
+            try:
+                self.model = field.parent_model
+            except AttributeError:
+                self.model = field.model
+            self.opts = self.model._meta
         if self.short_description is None:
             if self.direct:
                 self.short_description = force_unicode(field.verbose_name)
