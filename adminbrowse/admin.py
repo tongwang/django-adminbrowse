@@ -26,7 +26,7 @@ class AutoBrowseModelAdmin(ModelAdmin):
                 return entry  # Do nothing
 
             try:
-                field, model_, direct, m2m = self.opts.get_field_by_name(entry)
+                field = self.opts.get_field(entry)
             except FieldDoesNotExist:
                 return entry
 
