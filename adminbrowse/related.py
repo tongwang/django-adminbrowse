@@ -50,7 +50,7 @@ class ChangeLink(ChangeListTemplateColumn, ChangeListModelFieldColumn):
 
     def __init__(self, model, name, short_description=None, default="",
                  template_name=None, extra_context=None, text=None):
-        ChangeListTemplateColumn.__init__(self, short_description,
+        ChangeListTemplateColumn.__init__(self, short_description, default,
                                           template_name or self.template_name,
                                           extra_context, name)
         ChangeListModelFieldColumn.__init__(self, model, name,
@@ -108,7 +108,10 @@ class RelatedList(ChangeListModelFieldColumn):
         ChangeListModelFieldColumn.__init__(self, model, name,
                                             short_description, default)
         if self.direct:
-            self.to_model = self.field.related.parent_model
+            try:
+                self.to_model = self.field.related.parent_model
+            except AttributeError:
+                self.to_model = self.field.related.model
             self.to_opts = self.to_model._meta
             self.reverse_name = self.field.rel.related_name
             self.rel_name = self.opts.pk.name
@@ -153,14 +156,17 @@ class ChangeListLink(ChangeListTemplateColumn, ChangeListModelFieldColumn):
     def __init__(self, model, name, short_description=None,
                  text=lambda i, j: len(j), default="", template_name=None,
                  extra_context=None, admin_order_field=None):
-        ChangeListTemplateColumn.__init__(self, short_description,
+        ChangeListTemplateColumn.__init__(self, short_description, default,
                                           template_name or self.template_name,
                                           extra_context)
         ChangeListModelFieldColumn.__init__(self, model, name,
                                             short_description, default,
                                             admin_order_field=admin_order_field)
         if self.direct:
-            self.to_model = self.field.related.parent_model
+            try:
+                self.to_model = self.field.related.parent_model
+            except AttributeError:
+                self.to_model = self.field.related.model
             self.to_opts = self.to_model._meta
             self.reverse_name = self.field.rel.related_name
             self.rel_name = self.opts.pk.name

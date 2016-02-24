@@ -44,11 +44,12 @@ class ChangeListTemplateColumn(ChangeListColumn):
     allow_tags = True
     extra_context = {}
 
-    def __init__(self, short_description, template_name=None,
+    def __init__(self, short_description, default="", template_name=None,
                  extra_context=None, admin_order_field=None):
         ChangeListColumn.__init__(self, short_description, admin_order_field)
         self.template_name = template_name or self.template_name
         self.extra_context = extra_context or self.extra_context
+        self.default = default
 
     def __call__(self, obj):
         context = self.get_context(obj)
@@ -72,7 +73,7 @@ class ChangeListModelFieldColumn(ChangeListColumn):
             self.m2m = field.many_to_many
         except FieldDoesNotExist:
             descriptor = getattr(model, name)
-            field = descriptor.related
+            field = descriptor.rel
             self.direct = False
             self.m2m = True
         if self.direct:

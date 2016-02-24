@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+import django
 from django.test import TestCase
 from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import User, Group
 from django.contrib.admin.models import LogEntry
-from django.conf.urls.defaults import *
+from django.conf.urls import url, include
 from django.core.management import call_command
 
 from adminbrowse import (link_to_change, link_to_changelist, related_list,
@@ -55,7 +56,7 @@ test_site.register(User)
 test_site.register(Group)
 test_site.register(LogEntry)
 # An atypical admin path for the test site.
-urlpatterns = patterns('', (r'^foo/admin/bar/', include(test_site.urls)))
+urlpatterns = [url(r'^foo/admin/bar/', include(test_site.urls)),]
 
 def setup_test_models(sender, **kwargs):
     import adminbrowse.models
@@ -65,7 +66,11 @@ def setup_test_models(sender, **kwargs):
             setattr(adminbrowse.models, model.__name__, model)
         call_command('syncdb')
 setup_test_models.done = False
-models.signals.post_syncdb.connect(setup_test_models)
+if django.VERSION >= (1, 7):
+    # Django 1.7+ uses post_migrate signal
+    models.signals.post_migrate.connect(setup_test_models)
+else:
+    models.signals.post_syncdb.connect(setup_test_models)
 
 class TestChangeLink(TestCase):
     urls = 'adminbrowse.tests'
@@ -83,11 +88,11 @@ class TestChangeLink(TestCase):
         self.assertEqual(self.link.admin_order_field, 'author')
 
     def test_call_returns_html(self):
-        url = "/foo/admin/bar/adminbrowse/person/2/"
+        url = "/foo/admin/bar/adminbrowse/person/2/change/"
         self.assertEqual(self.link(self.books[1]).strip(),
             '<span class="change-link"><a href="%s" title="Go to author"></a>'
             ' Ernest Hemingway</span>' % url)
-        url = "/foo/admin/bar/adminbrowse/person/3/"
+        url = "/foo/admin/bar/adminbrowse/person/3/change/"
         self.assertEqual(self.link(self.books[3]).strip(),
             '<span class="change-link"><a href="%s" title="Go to author"></a>'
             ' Kurt Vonnegut</span>' % url)
@@ -422,14 +427,14 @@ class TestAutoBrowseModelAdmin(TestCase):
         css_media = self.model_admin.media['css']._css['all']
         self.assertTrue('test.css' in css_media)
 
-    def test_foreign_key_is_replaced_with_link_to_change(self):
-        field = self.model_admin.list_display[2]
+    def test_foreign_key_is_replaced_with_/(self):
+        field = self.model_admin.list_display[1]
         self.assertTrue(isinstance(field, link_to_change))
         self.assertEqual(field.model, Book)
         self.assertEqual(field.field_name, 'author')
 
     def test_url_field_is_replaced_with_link_to_url(self):
-        field = self.model_admin.list_display[4]
+        field = self.model_admin.list_display[3]
         self.assertTrue(isinstance(field, link_to_url))
         self.assertEqual(field.model, Book)
         self.assertEqual(field.field_name, 'loc_url')
