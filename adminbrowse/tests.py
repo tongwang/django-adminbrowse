@@ -427,7 +427,7 @@ class TestAutoBrowseModelAdmin(TestCase):
         css_media = self.model_admin.media['css']._css['all']
         self.assertTrue('test.css' in css_media)
 
-    def test_foreign_key_is_replaced_with_/(self):
+    def test_foreign_key_is_replaced_with_link_to_change(self):
         field = self.model_admin.list_display[1]
         self.assertTrue(isinstance(field, link_to_change))
         self.assertEqual(field.model, Book)

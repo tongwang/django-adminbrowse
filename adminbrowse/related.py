@@ -50,7 +50,7 @@ class ChangeLink(ChangeListTemplateColumn, ChangeListModelFieldColumn):
 
     def __init__(self, model, name, short_description=None, default="",
                  template_name=None, extra_context=None, text=None):
-        ChangeListTemplateColumn.__init__(self, short_description, default,
+        ChangeListTemplateColumn.__init__(self, short_description,
                                           template_name or self.template_name,
                                           extra_context, name)
         ChangeListModelFieldColumn.__init__(self, model, name,
@@ -75,7 +75,7 @@ class ChangeLink(ChangeListTemplateColumn, ChangeListModelFieldColumn):
             value = self.text
 
         context = {'column': self, 'object': obj, 'value': value, 'url': url,
-                   'title': title}
+                   'title': title, 'default': self.default}
         context.update(self.extra_context)
         return context
 
@@ -156,7 +156,7 @@ class ChangeListLink(ChangeListTemplateColumn, ChangeListModelFieldColumn):
     def __init__(self, model, name, short_description=None,
                  text=lambda i, j: len(j), default="", template_name=None,
                  extra_context=None, admin_order_field=None):
-        ChangeListTemplateColumn.__init__(self, short_description, default,
+        ChangeListTemplateColumn.__init__(self, short_description,
                                           template_name or self.template_name,
                                           extra_context)
         ChangeListModelFieldColumn.__init__(self, model, name,
@@ -192,7 +192,8 @@ class ChangeListLink(ChangeListTemplateColumn, ChangeListModelFieldColumn):
             url = title = None
 
         context = {'column': self, 'object': obj, 'value': value,
-                   'text': text, 'url': url, 'title': title}
+                   'text': text, 'url': url, 'title': title,
+                   'default': self.default}
         context.update(self.extra_context)
 
         return context
