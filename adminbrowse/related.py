@@ -109,9 +109,9 @@ class RelatedList(ChangeListModelFieldColumn):
                                             short_description, default)
         if self.direct:
             try:
-                self.to_model = self.field.related.parent_model
+                self.to_model = self.field.remote_field.parent_model
             except AttributeError:
-                self.to_model = self.field.related.model
+                self.to_model = self.field.remote_field.model
             self.to_opts = self.to_model._meta
             self.reverse_name = self.field.rel.related_name
             self.rel_name = self.opts.pk.name
@@ -164,9 +164,9 @@ class ChangeListLink(ChangeListTemplateColumn, ChangeListModelFieldColumn):
                                             admin_order_field=admin_order_field)
         if self.direct:
             try:
-                self.to_model = self.field.related.parent_model
+                self.to_model = self.field.remote_field.parent_model
             except AttributeError:
-                self.to_model = self.field.related.model
+                self.to_model = self.field.remote_field.model
             self.to_opts = self.to_model._meta
             self.reverse_name = self.field.rel.related_name
             self.rel_name = self.opts.pk.name

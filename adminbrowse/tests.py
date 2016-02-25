@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import django
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import User, Group
@@ -72,8 +72,8 @@ if django.VERSION >= (1, 7):
 else:
     models.signals.post_syncdb.connect(setup_test_models)
 
+@override_settings(ROOT_URLCONF='adminbrowse.tests')
 class TestChangeLink(TestCase):
-    urls = 'adminbrowse.tests'
     fixtures = ['test_adminbrowse.json']
 
     def setUp(self):
@@ -111,8 +111,8 @@ class TestChangeLink(TestCase):
     def test_default_defaults_to_empty_string(self):
         self.assertEqual(self.link(self.books[5]).strip(), "")
 
+@override_settings(ROOT_URLCONF='adminbrowse.tests')
 class TestOneToManyChangeListLink(TestCase):
-    urls = 'adminbrowse.tests'
     fixtures = ['test_adminbrowse.json']
 
     def setUp(self):
@@ -174,8 +174,8 @@ class TestOneToManyChangeListLink(TestCase):
         link = link_to_changelist(Person, 'bibliography', text="")
         self.assertEqual(link(self.people[2]).strip(), "")
 
+@override_settings(ROOT_URLCONF='adminbrowse.tests')
 class TestIndirectManyToManyChangeListLink(TestCase):
-    urls = 'adminbrowse.tests'
     fixtures = ['test_adminbrowse.json']
 
     def setUp(self):
@@ -222,8 +222,8 @@ class TestDefaultRelatedNameChangeListLink(TestCase):
         self.assertEqual(self.one_to_many.short_description, u"logentry set")
         self.assertEqual(self.many_to_many.short_description, u"user set")
 
+@override_settings(ROOT_URLCONF='adminbrowse.tests')
 class TestDirectManyToManyChangeListLink(TestCase):
-    urls = 'adminbrowse.tests'
     fixtures = ['test_adminbrowse.json']
 
     def setUp(self):
@@ -258,8 +258,8 @@ class TestDirectManyToManyChangeListLink(TestCase):
         link = link_to_changelist(Book, 'categories', default="No genres")
         self.assertEqual(link(self.books[5]).strip(), "No genres")
 
+@override_settings(ROOT_URLCONF='adminbrowse.tests')
 class TestOneToManyRelatedList(TestCase):
-    urls = 'adminbrowse.tests'
     fixtures = ['test_adminbrowse.json']
 
     def setUp(self):
@@ -289,8 +289,8 @@ class TestOneToManyRelatedList(TestCase):
         self.assertEqual(column(self.people[2]),
             "Cat's Cradle ~ Slaughterhouse-Five")
 
+@override_settings(ROOT_URLCONF='adminbrowse.tests')
 class TestDirectManyToManyRelatedList(TestCase):
-    urls = 'adminbrowse.tests'
     fixtures = ['test_adminbrowse.json']
 
     def setUp(self):
@@ -307,8 +307,8 @@ class TestDirectManyToManyRelatedList(TestCase):
     def test_call_returns_comma_separated_list(self):
         self.assertEqual(self.column(self.books[4]), "War, Science Fiction")
 
+@override_settings(ROOT_URLCONF='adminbrowse.tests')
 class TestIndirectManyToManyRelatedList(TestCase):
-    urls = 'adminbrowse.tests'
     fixtures = ['test_adminbrowse.json']
 
     def setUp(self):
@@ -326,8 +326,8 @@ class TestIndirectManyToManyRelatedList(TestCase):
         self.assertEqual(self.column(self.genres[1]),
             "The Old Man and the Sea")
 
+@override_settings(ROOT_URLCONF='adminbrowse.tests')
 class TestURLColumn(TestCase):
-    urls = 'adminbrowse.tests'
     fixtures = ['test_adminbrowse.json']
 
     def setUp(self):
@@ -373,8 +373,8 @@ class TestURLColumn(TestCase):
     def test_default_defaults_to_empty_string(self):
         self.assertEqual(self.column(self.people[1]), "")
 
+@override_settings(ROOT_URLCONF='adminbrowse.tests')
 class TestTruncatedTextColumn(TestCase):
-    urls = 'adminbrowse.tests'
     fixtures = ['test_adminbrowse.json']
 
     def setUp(self):
@@ -404,8 +404,8 @@ class TestTruncatedTextColumn(TestCase):
     def test_default_defaults_to_empty_string(self):
         self.assertEqual(self.column(self.people[1]), "")
 
+@override_settings(ROOT_URLCONF='adminbrowse.tests')
 class TestAutoBrowseModelAdmin(TestCase):
-    urls = 'adminbrowse.tests'
     fixtures = ['test_adminbrowse.json']
 
     def setUp(self):
